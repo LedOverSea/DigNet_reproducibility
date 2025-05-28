@@ -1,3 +1,9 @@
+# 为了上传github,屏蔽解压出来的大文件
+*.data
+*.csv
+*.mat
+*.pth
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

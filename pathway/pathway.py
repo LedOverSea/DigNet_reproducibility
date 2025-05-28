@@ -262,16 +262,19 @@ def from_cancer_create(BRCA_exp_filter_saver, KEGG, parm, lim=200, test_pathway=
     predicted_adj_matrix, new_graph = pca_cmi(exp_pca_discretized, net_bit, parm['pmi_percent'], 1)
     predicted_adj_matrix = predicted_adj_matrix.toarray()
     new_bit_crop = pd.DataFrame(new_graph.edges(), columns=['TF', 'Gene'])
+    print('边的数量',np.sum(adj_matrix),np.sum(predicted_adj_matrix),(np.sum(adj_matrix) / np.sum(predicted_adj_matrix)) )
     if np.sum(predicted_adj_matrix) == 0:
         new_row = {'Pathway': Other_Pathway, 'NUM_ORIG': 0, 'NUM_PCC': 0, 'NUM_MI': 0}
         return None, None, new_row
     elif (np.sum(adj_matrix) / np.sum(predicted_adj_matrix)) < 0.5:
         NUM_ORIG, NUM_PCC, NUM_MI, overflow = cal_percent(net_bit_orig, corr_TF_Gene, MI_TF_Gene, net_bit_orig)
         new_row = {'Pathway': Other_Pathway, 'NUM_ORIG': NUM_ORIG, 'NUM_PCC': NUM_PCC, 'NUM_MI': NUM_MI}
+        print('pearson, mi 是对的')
         return exp, adj_matrix, new_row
     else:
         NUM_ORIG, NUM_PCC, NUM_MI, overflow = cal_percent(new_bit_crop, corr_TF_Gene, MI_TF_Gene, net_bit_orig)
         new_row = {'Pathway': Other_Pathway, 'NUM_ORIG': NUM_ORIG, 'NUM_PCC': NUM_PCC, 'NUM_MI': NUM_MI}
+        print('cmi是对的')
         return exp, predicted_adj_matrix, new_row
 
 
@@ -521,6 +524,7 @@ def create_batch_dataset_from_cancer(filepath='CancerDatasets/DCA/BRCA_output.cs
 if __name__=='__main__':
     from PCA_CMI import pca_cmi
     import powerlaw
+    
     celllist = ["T_cell", "B_cell", "Cancer"]
     filelist = [1, 2, 3, 9, 11]
     test_pathway = 'hsa05224'

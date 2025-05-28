@@ -278,6 +278,7 @@ class DigNetGraphTransformer(nn.Module):
 
         # Transformer encoder layers
         self.Transformer_encoder_M = nn.ModuleList([
+            
             Transformer_encoder(
                 trans_GE=hidden_dims['dx'],
                 trans_E=hidden_dims['de'],
