@@ -195,7 +195,7 @@ class NodeEdgeBlock(nn.Module):
         # Compute attentions. attn is still (bs, n, n, n_head, df)
         softmax_mask = e_mask2.expand(-1, n, -1, self.n_head)  # bs, 1, n, 1
         attn = masked_softmax(Y, softmax_mask, dim=2)  # bs, n, n, n_head
-
+        # 2025.6.2,attn形状应该是(bs, n, n, n_head, df)
         V = self.v(X) * x_mask  # bs, n, trans_GE
         V = V.reshape((V.size(0), V.size(1), self.n_head, self.df))
         V = V.unsqueeze(1)  # (bs, 1, n, n_head, df)

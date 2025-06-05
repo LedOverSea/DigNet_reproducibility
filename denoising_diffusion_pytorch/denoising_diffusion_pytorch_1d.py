@@ -157,7 +157,7 @@ class GaussianDiffusion1D(nn.Module):
         """
         batch, ALLedge_index = self.noisy_data2data_dense(noisy_data, all_edge=False)
         time_tensor_tonode = noisy_data['t'][batch.batch].squeeze(-1)
-    #    time_tensor_toedge = noisy_data['t_int'].repeat_interleave(self.max_num_nodes * self.max_num_nodes)
+    #   time_tensor_toedge = noisy_data['t_int'].repeat_interleave(self.max_num_nodes * self.max_num_nodes)
         torch.set_grad_enabled(True)
         pred = self.model(batch.x, batch.edge_attr, time_tensor_tonode, batch.edge_index, ALLedge_index, node_mask, noisy_data)
         pred = self.pred_shape2data(pred, noisy_data)
@@ -339,8 +339,8 @@ class GaussianDiffusion1D(nn.Module):
                                                  Qtb=Qtb)
         prob_true.E = prob_true.E.reshape((bs, n, n, -1))
         prob_pred = self.posterior_distributions(E=pred_probs_E,
-                                                 E_t=noisy_data['E_t'],
-                                                 Qt=Qt,
+E_t=noisy_data['E_t'],
+                                                                                                  Qt=Qt,
                                                  Qsb=Qsb,
                                                  Qtb=Qtb)
         prob_pred.E = prob_pred.E.reshape((bs, n, n, -1))
