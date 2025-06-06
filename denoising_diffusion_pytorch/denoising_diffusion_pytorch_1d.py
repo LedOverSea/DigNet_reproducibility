@@ -339,10 +339,10 @@ class GaussianDiffusion1D(nn.Module):
                                                  Qtb=Qtb)
         prob_true.E = prob_true.E.reshape((bs, n, n, -1))
         prob_pred = self.posterior_distributions(E=pred_probs_E,
-E_t=noisy_data['E_t'],
-                                                                                                  Qt=Qt,
-                                                 Qsb=Qsb,
-                                                 Qtb=Qtb)
+                                                E_t=noisy_data['E_t'],
+                                                Qt=Qt,
+                                                Qsb=Qsb,
+                                                Qtb=Qtb)
         prob_pred.E = prob_pred.E.reshape((bs, n, n, -1))
         # Reshape and filter masked rows
         prob_true_E, prob_pred.E = self.mask_distributions(true_E=prob_true.E, pred_E=prob_pred.E, node_mask=node_mask)
