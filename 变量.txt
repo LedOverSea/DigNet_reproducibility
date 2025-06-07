@@ -2,3 +2,7 @@ t_int:(bs,1)
 X:(bs,n,dx)
 E:(bs,n,n,de)
 node_mask:(bs,n)
+
+常用词
+dense:Batch/ PlaceHolder
+s: t-1
