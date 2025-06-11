@@ -146,6 +146,19 @@ def calRegnetwork(human_network, GRN_GENE_symbol):
                     d += 1
     return pd.DataFrame(network, columns=['TF', 'Gene'])
 
+# 改写一种高效方法
+def calRegnetwork1(human_network, GRN_GENE_symbol):
+    human_network_TF_symbol = human_network.iloc[:, 0].values
+    human_network_Gene_symbol = human_network.iloc[:, 2].values
+    network = []
+    for i in range(human_network.shape[0]):
+        if human_network_TF_symbol[i] in GRN_GENE_symbol and human_network_Gene_symbol[i] in GRN_GENE_symbol:
+            network.append([human_network_TF_symbol[i],human_network_Gene_symbol[i]])
+
+    return pd.DataFrame(network, columns=['TF', 'Gene'])
+
+def f ():
+    return 3
 
 def load_KEGG(kegg_file='pathway/kegg/KEGG_all_pathway.pkl'):
     '''
@@ -224,7 +237,7 @@ def from_cancer_create(BRCA_exp_filter_saver, KEGG, parm, lim=200, test_pathway=
     scaler = StandardScaler()
     normal_exp = scaler.fit_transform(exp)
     exp = pd.DataFrame(normal_exp, columns=exp.columns, index=exp.index)
-    net_bit = calRegnetwork(human_network, exp.index.to_list())
+    net_bit = calRegnetwork1(human_network, exp.index.to_list())
     net_bit_orig = net_bit.copy()
 
     # pro-process data
@@ -269,12 +282,12 @@ def from_cancer_create(BRCA_exp_filter_saver, KEGG, parm, lim=200, test_pathway=
     elif (np.sum(adj_matrix) / np.sum(predicted_adj_matrix)) < 0.5:
         NUM_ORIG, NUM_PCC, NUM_MI, overflow = cal_percent(net_bit_orig, corr_TF_Gene, MI_TF_Gene, net_bit_orig)
         new_row = {'Pathway': Other_Pathway, 'NUM_ORIG': NUM_ORIG, 'NUM_PCC': NUM_PCC, 'NUM_MI': NUM_MI}
-        print('pearson, mi 是对的')
+        print('计算GRN的方法: pearson, mi')
         return exp, adj_matrix, new_row
     else:
         NUM_ORIG, NUM_PCC, NUM_MI, overflow = cal_percent(new_bit_crop, corr_TF_Gene, MI_TF_Gene, net_bit_orig)
         new_row = {'Pathway': Other_Pathway, 'NUM_ORIG': NUM_ORIG, 'NUM_PCC': NUM_PCC, 'NUM_MI': NUM_MI}
-        print('cmi是对的')
+        print('计算GRN的方法: cmi')
         return exp, predicted_adj_matrix, new_row
 
 
@@ -358,7 +371,7 @@ def create_batch_dataset_from_mat(matnum=100, test=False):
     return batch
 
 
-# Create train/test sets from SEIGIO simulation datasets
+# Create train/test sets from SERGIO simulation datasets
 def create_batch_dataset_simu(filename='./pathway/simulation/SERGIO_data_node_2000.data', num=None, device=None,
                               test=False, adddata=None, metacell=True, Cnum=100, k=20):
     if test:
@@ -457,18 +470,18 @@ def cal_metacell(BRCA_exp_filter_saver, Cnum=100, k=20):
 
 def create_batch_dataset_from_cancer(filepath='CancerDatasets/DCA/BRCA_output.csv',
                                      test_pathway='hsa05224', test=False, device=None, metacell=True, Cnum=100, k=20, lim=200, return_list=False):
- #   print('Processing BRCA data and KEGG pathway...')
+#   print('Processing BRCA data and KEGG pathway...')
     # 1. 读取基因表达数据
     if metacell:
         #  BRCA_exp_filter_saver = pd.read_csv(filepath.replace("output", "input"))
         BRCA_exp_filter_saver = pd.read_csv(filepath)
         BRCA_exp_filter_saver.set_index(BRCA_exp_filter_saver.columns[0], inplace=True)
-        BRCA_exp_filter_saver.drop(columns=BRCA_exp_filter_saver.columns[0], inplace=True)
+        #BRCA_exp_filter_saver.drop(columns=BRCA_exp_filter_saver.columns[0], inplace=True)
         BRCA_exp_filter_saver = cal_metacell(BRCA_exp_filter_saver, Cnum=Cnum, k=k)
     else:
         BRCA_exp_filter_saver = pd.read_csv(filepath)
         BRCA_exp_filter_saver.set_index(BRCA_exp_filter_saver.columns[0], inplace=True)
-        BRCA_exp_filter_saver.drop(columns=BRCA_exp_filter_saver.columns[0], inplace=True)
+        #BRCA_exp_filter_saver.drop(columns=BRCA_exp_filter_saver.columns[0], inplace=True)
 
     # 2. 读取KEGG pathway信息
     KEGG = load_KEGG()
@@ -504,7 +517,8 @@ def create_batch_dataset_from_cancer(filepath='CancerDatasets/DCA/BRCA_output.cs
                                                             test_pathway=test_pathway,
                                                             Other_Pathway=Other_Pathway,
                                                             human_network=human_network)
-            network_percent = network_percent.append(new_row, ignore_index=True)
+            #network_percent = network_percent.append(new_row, ignore_index=True)
+            network_percent = pd.concat([network_percent, pd.DataFrame([new_row])], ignore_index=True)
             if exp is not None:
                 pbar.set_description(
                     f" Pathway: {Other_Pathway}, total contain {exp.shape[0]} genes, and {np.sum(adj_matrix)} links!")

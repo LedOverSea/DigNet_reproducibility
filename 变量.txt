@@ -3,6 +3,8 @@ X:(bs,n,dx)
 E:(bs,n,n,de)
 node_mask:(bs,n)
 
-常用词
-dense:Batch/ PlaceHolder
-s: t-1
+
+函数命名常用后缀
+dense:Batch/ PlaceHolder 经常混用
+s: t-1时刻
+b: bar,从0到t时刻

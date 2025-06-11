@@ -700,6 +700,8 @@ class GaussianDiffusion1D(nn.Module):
                           's_int': s_array, 'node_mask': node_mask}
             noisy_data['y_t'] = noisy_data['t'].float()
             sampled_s, sampled_s2 = self.sample_zt(noisy_data)
+
+
             # for TF_ID in TF_ID_list:
             #     for GENE_ID in GENE_ID_list:
             #         sampled_s.E[:, TF_ID, GENE_ID, :] = Noedge

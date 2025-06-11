@@ -18,7 +18,7 @@ import pickle
 from make_final_net import cal_final_net
 from joblib import Parallel, delayed
 import os
-
+import json
 warnings.filterwarnings("ignore")
 
 
@@ -178,11 +178,11 @@ class DigNet:
         # load data
         if not is_csv_or_xlsx(train_filename):
             data, edge_percent = create_batch_dataset_simu(filename=train_filename,
-                                                           num=n_train,
-                                                           device=self.device,
-                                                           metacell=self.metacell,
-                                                           Cnum=self.Cnum,
-                                                           k=self.k)
+                    num=n_train,
+                    device=self.device,
+                    metacell=self.metacell,
+                    Cnum=self.Cnum,
+                    k=self.k)
             test_list = []
             for test_i in range(n_test[0], n_test[1]):
                 testdata = create_batch_dataset_simu(filename=train_filename, num=test_i, test=True)
@@ -199,13 +199,13 @@ class DigNet:
             test_list = []
             if self.test_pathway is not None:
                 testdata = create_batch_dataset_from_cancer(filepath=train_filename,
-                                                            test_pathway=self.test_pathway, test=True,
-                                                            device=self.device,
-                                                            metacell=True,
-                                                            Cnum=self.Cnum, k=self.k)
+                    test_pathway=self.test_pathway, test=True,
+                    device=self.device,
+                    metacell=True,
+                    Cnum=self.Cnum, k=self.k)
                 truelabel, node_mask, _ = network_preprocess.to_dense(testdata.x, testdata.edge_index,
-                                                                      testdata.edge_attr,
-                                                                      training=True, max_num_nodes=testdata.x.shape[0])
+                                                                    testdata.edge_attr,
+                                                                    training=True, max_num_nodes=testdata.x.shape[0])
                 truelabel_discrete = truelabel.mask(node_mask, collapse=True)
                 truelabel_discrete = truelabel_discrete.E.squeeze(0)
                 test_list.append({'testdata': testdata, 'truelabel_discrete': truelabel_discrete})
@@ -347,7 +347,7 @@ class DigNet:
     def test(self, diffusion_pre, testdata, truelabel=None):
         self.diffusion = self.load_pre_model(diffusion_pre)
         self.diffusion.eval()
-
+        
         all_adj_list = []
         print(self.muti_process)
         if self.muti_process:

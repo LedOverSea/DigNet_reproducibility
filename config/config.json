@@ -1,6 +1,6 @@
 {
     "pca_file": "pca_model_parameters.pkl",
-    "save_dir": "result/",
+    "save_dir": "reproducibility/",
     "save_label": "Training data",
     "test_pathway": "None",
     "diffusion_timesteps": 1000,
@@ -11,7 +11,7 @@
     "ensemble": 1,
     "max_nodes": null,
     "show": "False",
-    "num_epoch": 2000,
+    "num_epoch": 1000,
     "batch_size": 60,
     "LR": 0.0001,
     "test_interval": 100,
